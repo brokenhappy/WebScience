@@ -1,6 +1,7 @@
 package scraping;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,35 +14,59 @@ public abstract class PageScraper implements Runnable {
 
 	private String location;
 	private String selectQuery;
-	private Node node;
-
+	private Node node = null;
+	private boolean ignore = false; //if true, it will not be executed
 	/**
 	 * Constructs the PageScraper
 	 * @param location The URL of the page (after the https://www.imdb.com prefix)
+	 * @param selectQuery Selects the elements on the page, which are processed with the exec() method selects entire document if selectQuery == null
+	 * @param addToGraph true if it should be added to the graph, false if it shouldn't
+	 * @param origin The origin of the page, can be the a userID, a titleID or null
 	 */
-	public PageScraper(String location, String selectQuery) {
-		int index = location.lastIndexOf("?ref_=");
-		if (index > 0)
-			location = location.substring(0, index);
-		this.node = new Node(location, Process.getInstance().getGraph());
+	public PageScraper(String location, String selectQuery, boolean addToGraph) {
+		location = ScraperExpert.cleanURL(location);
+		if (addToGraph) {
+			if (ScraperExpert.getGraph().containsKey(location)) {
+				node = ScraperExpert.getGraph().get(location);
+				this.ignore = true;
+				return;
+			} else {
+				node = new Node(location, ScraperExpert.getGraph());
+			}
+		}
+
 		this.location = location;
-		this.selectQuery = selectQuery;
+		if (selectQuery != null)
+			this.selectQuery = selectQuery.trim();
 	}
 
 	@Override
 	public void run() {
+		if (ignore)
+			return;
 		Document doc = null;
 		try {
-			doc = Jsoup.connect(location).get();
-			Elements els = doc.select(selectQuery);
 			System.out.println(location);
-        	for (Element el : els) {
-        		exec(el);
-        	}
+			doc = Jsoup.connect(location).get();
+			if (selectQuery == null) {
+				exec(doc);
+			} else {
+				Elements els = doc.select(selectQuery);
+	        	for (Element el : els)
+	        		exec(el);
+			}
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
-		Process.getInstance().enqueue(getResult());
+		Iterable<PageScraper> results = getResult();
+		if (results == null)
+			return;
+
+		if (node != null)
+			for (PageScraper result : results)
+				if (result.node != null)
+					node.addNeighbour(result.node);
+		Process.getInstance().enqueue(results);
 	}
 
 	/**
@@ -49,6 +74,13 @@ public abstract class PageScraper implements Runnable {
 	 */
 	public Node getNode() {
 		return node;
+	}
+
+	/**
+	 * @return The URL of this page (without the http://www.imdb.com prefix)
+	 */
+	public String getLocation() {
+		return location;
 	}
 
 	/**

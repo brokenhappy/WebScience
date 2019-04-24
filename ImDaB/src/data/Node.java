@@ -18,6 +18,10 @@ public class Node {
 		neighbours.put(name, graph.get(name));
 	}
 
+	public void addNeighbour(Node node) {
+		neighbours.put(node.name, node);
+	}
+
 	public String getName() {
 		return name;
 	}

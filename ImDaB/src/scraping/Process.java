@@ -4,11 +4,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import data.Graph;
-
 public class Process {
 
-	private Graph graph = new Graph();
 	private ThreadPoolExecutor pool = new ThreadPoolExecutor(5, 15, 5, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), (r, e) -> {
 		PageScraper scraper = (PageScraper) r;
 		System.out.print(scraper.getNode().getName() + " has not been processed correctly");
@@ -22,10 +19,6 @@ public class Process {
 	}
 	private Process() {
 
-	}
-
-	public Graph getGraph() {
-		return graph;
 	}
 
 	public void enqueue(PageScraper scraper) {
