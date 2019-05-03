@@ -18,7 +18,7 @@ public class IDExtractor {
 				if (html.charAt(i + 1) == '/') {
 					if (html.charAt(i + 2) == 'd' && html.charAt(i + 3) == 'i' && html.charAt(i + 4) == 'v' && html.charAt(i + 5) == '>') {
 						if(--counter == 0) {
-							return html.substring(start,i);
+							return html.substring(start, i + 6);
 						}
 					}
 				} else if (html.charAt(i + 1) == 'd' && html.charAt(i + 2) == 'i' && html.charAt(i + 3) == 'v' && (html.charAt(i + 4) == '>' || html.charAt(i + 4) == ' ')) {
