@@ -1,7 +1,6 @@
 package scraping;
 
 import java.util.LinkedList;
-import java.util.regex.Matcher;
 
 import org.jsoup.nodes.Element;
 
@@ -11,7 +10,7 @@ public class UserReviewScraper extends PageScraper {
 	private String userID = null;
 
 	public UserReviewScraper(String userID) {
-		super("/user/" + userID + "/reviews", "#main > .article > .lister", true);
+		super("/user/" + userID + "/reviews", "#main > .article > .lister");
 		this.userID = userID;
 	}
 
@@ -36,8 +35,6 @@ public class UserReviewScraper extends PageScraper {
 			String ref = linkElement.attr("href"); // formatted like: "https://www.imdb.com/user/ur2103188/?ref_=adv_li_tt"
 			if (ref != null && ref.isEmpty()) {
 				ref = ScraperExpert.cleanURL(ref);
-				if (ScraperExpert.getGraph().containsKey(ref))
-					getNode().addNeighbour(ScraperExpert.getGraph().get(ref));
 			}
 		}
 		Element loadData = element.selectFirst(".load-more-data");
@@ -52,7 +49,7 @@ public class UserReviewScraper extends PageScraper {
 		private String paginationKey = null;
 
 		public SubReviewScraper(String paginationKey) {
-			super("/user/" + userID + "/reviews/_ajax?paginationKey=" + paginationKey, null, false);
+			super("/user/" + userID + "/reviews/_ajax?paginationKey=" + paginationKey, null);
 		}
 
 		@Override

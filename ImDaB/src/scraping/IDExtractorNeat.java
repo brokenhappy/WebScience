@@ -3,12 +3,10 @@ package scraping;
 public class IDExtractorNeat {
 	/**
 	 * Extracts the entire element with id="main"
-	 * 
+	 *
 	 * @param html The HTML from which the element is to be extracted
-	 * @param tag The HTML tag type of the wanted block of HTML
-	 * @param 
 	 */
-	public static String extractElement(String tag, String id, String html) {
+	public static String extractElement(String html) {
 		int start = html.indexOf("<div id=\"main\"");
 		if (start == -1)
 			return html;
@@ -29,9 +27,5 @@ public class IDExtractorNeat {
 			}
 		}
 		return html;
-	}
-
-	public static void main(String[] args) {
-		System.out.print(IDExtractorNeat.extractElement("i don tlike you<div id=\"main\" testing <div> skdjhf </div> sdkjhf </div>yeet lmao"));
 	}
 }

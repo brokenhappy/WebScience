@@ -1,20 +1,15 @@
 package scraping;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import data.Node;
 
 public abstract class PageScraper implements Runnable {
 
 	private String location;
 	private String selectQuery;
-	private Node node = null;
 	private boolean ignore = false; //if true, it will not be executed
 	/**
 	 * Constructs the PageScraper
@@ -23,17 +18,8 @@ public abstract class PageScraper implements Runnable {
 	 * @param addToGraph true if it should be added to the graph, false if it shouldn't
 	 * @param origin The origin of the page, can be the a userID, a titleID or null
 	 */
-	public PageScraper(String location, String selectQuery, boolean addToGraph) {
+	public PageScraper(String location, String selectQuery) {
 		location = ScraperExpert.cleanURL(location);
-		if (addToGraph) {
-			if (ScraperExpert.getGraph().containsKey(location)) {
-				node = ScraperExpert.getGraph().get(location);
-				this.ignore = true;
-				return;
-			} else {
-				node = new Node(location, ScraperExpert.getGraph());
-			}
-		}
 
 		this.location = location;
 		if (selectQuery != null)
@@ -44,17 +30,23 @@ public abstract class PageScraper implements Runnable {
 	public void run() {
 		if (ignore)
 			return;
-		Document doc = null;
 		try {
+			Document doc;
+			//if we search for element with id="main"
+			if (selectQuery != null && selectQuery.trim().startsWith("#main"))
+				//Download raw body content, extract element with id="main" and parse it
+				doc = Jsoup.parse(IDExtractor.extractElement(Jsoup.connect(location).execute().body()));
+			else
+				//Download and parse the entire document
+				doc = Jsoup.connect(location).get();
+
 			System.out.println(location);
-			doc = Jsoup.connect(location).get();
-			if (selectQuery == null) {
+			if (selectQuery == null)
 				exec(doc);
-			} else {
-				Elements els = doc.select(selectQuery);
-	        	for (Element el : els)
+			else
+	        	for (Element el : doc.select(selectQuery))
 	        		exec(el);
-			}
+
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -62,18 +54,7 @@ public abstract class PageScraper implements Runnable {
 		if (results == null)
 			return;
 
-		if (node != null)
-			for (PageScraper result : results)
-				if (result.node != null)
-					node.addNeighbour(result.node);
 		Process.getInstance().enqueue(results);
-	}
-
-	/**
-	 * @return The node connected to this page
-	 */
-	public Node getNode() {
-		return node;
 	}
 
 	/**

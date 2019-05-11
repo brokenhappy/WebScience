@@ -8,7 +8,7 @@ public class Process {
 
 	private ThreadPoolExecutor pool = new ThreadPoolExecutor(5, 15, 5, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), (r, e) -> {
 		PageScraper scraper = (PageScraper) r;
-		System.out.print(scraper.getNode().getName() + " has not been processed correctly");
+		System.out.print(scraper.getLocation() + " has not been processed correctly");
 	});
 
 	private static Process instance;

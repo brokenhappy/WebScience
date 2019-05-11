@@ -11,7 +11,7 @@ public class GameReviewScraper extends PageScraper {
 	private String titleID = null;
 
 	public GameReviewScraper(String titleID) {
-		super("/title/" + titleID + "/reviews", "#main > .article > .lister", true);
+		super("/title/" + titleID + "/reviews", "#main > .article > .lister");
 		this.titleID = titleID;
 	}
 
@@ -53,7 +53,7 @@ public class GameReviewScraper extends PageScraper {
 		private String paginationKey = null;
 
 		public SubReviewScraper(String paginationKey) {
-			super("/title/" + titleID + "/reviews/_ajax?paginationKey=" + paginationKey, null, false);
+			super("/title/" + titleID + "/reviews/_ajax?paginationKey=" + paginationKey, null);
 		}
 
 		@Override

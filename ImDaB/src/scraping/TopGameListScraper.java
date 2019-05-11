@@ -9,7 +9,7 @@ public class TopGameListScraper extends PageScraper {
 	private LinkedList<PageScraper> result = new LinkedList<PageScraper>();
 
 	public TopGameListScraper(String location) {
-		super(location, "#main > .article > .desc > span:first-child", false);
+		super(location, "#main > .article > .desc > span:first-child");
 	}
 
 	@Override
