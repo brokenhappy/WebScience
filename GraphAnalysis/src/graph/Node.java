@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class Node {
 	private String url;
 	private Context context;
-	//String = link of a node
+	//String = the link of a node
 	private HashMap<String, Review> adjacencies;
 	
 	public Node(String url, Context context) {
