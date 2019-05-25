@@ -1,15 +1,17 @@
 package graph;
 
+import java.util.ArrayList;
+
 public class GameContext extends Context {
 	private String title;
-	private String category;
+	private ArrayList<String> categories;
 	private int rating;
 	private int nrOfVotes;
 	
-	public GameContext(int id, String title, String category, int rating, int nrOfVotes) {
+	public GameContext(int id, String title, ArrayList<String> categories, int rating, int nrOfVotes) {
 		super(id);
 		this.title = title;
-		this.category = category;
+		this.categories = categories;
 		this.rating = rating;
 		this.nrOfVotes = nrOfVotes;
 	}
@@ -22,12 +24,16 @@ public class GameContext extends Context {
 		this.title = title;
 	}
 
-	public String getCategory() {
-		return category;
+	public ArrayList<String> getCategories() {
+		return categories;
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+	public void addCategory(String category) {
+		this.categories.add(category);
+	}
+	
+	public void setCategories(ArrayList<String> categories) {
+		this.categories = categories;
 	}
 
 	public int getRating() {

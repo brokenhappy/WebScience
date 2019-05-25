@@ -45,6 +45,4 @@ public class Node {
 		this.adjacencies = adjacencies;
 	}
 	
-	
-	
 }

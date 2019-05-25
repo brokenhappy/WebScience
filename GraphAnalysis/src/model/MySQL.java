@@ -62,7 +62,8 @@ public class MySQL {
 		return true;
 	}
 
-	// Testing method
+	// Test method
+	// It gives processQuery a select statement, and then tells it what to do with EACH row.
 //	public static void main(String[] args) {
 //
 //		processQuery("SELECT ID, Rating, NrOfVotes, Title FROM game LIMIT 10", (row) -> {
