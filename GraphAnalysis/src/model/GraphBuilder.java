@@ -17,7 +17,7 @@ public class GraphBuilder {
 	private Map<String, Node> nodes = new HashMap<String, Node>();
 	private Map<Integer, ArrayList<String>> categories = new HashMap<Integer, ArrayList<String>>();
 	private Set<Review> reviews = new HashSet<Review>();
-	
+
 	private Graph graph;
 
 //	private ResultSet currentSet = null;
@@ -27,17 +27,17 @@ public class GraphBuilder {
 	}
 
 	public void genGraph() {
-		//Put categories of games into map
-		//Doesn't work as there is no data in the game_category table
-		MySQL.processQuery("SELECT gameID, Category FROM game_category LIMIT 10", (row) -> {
+		// Put categories of games into map
+		// Doesn't work as there is no data in the game_category table
+
+		MySQL.processQuery("SELECT gameID, Category FROM game_category", (row) -> {
 			int id = Integer.parseInt((String) row[0]);
 			String category = (String) row[1];
 			categories.get(id).add(category);
 		});
-		
-		
-		// Create Node objects and add them to graph
-		MySQL.processQuery("SELECT ID, name FROM user LIMIT 10", (row) -> {
+
+		// Create user node objects
+		MySQL.processQuery("SELECT ID, name FROM user LIMIT 1000", (row) -> {
 			int id = Integer.parseInt((String) row[0]);
 			String url = String.format("ur%07d", id);
 			String name = (String) row[1];
@@ -45,8 +45,11 @@ public class GraphBuilder {
 			Node node = new Node(url, context);
 			nodes.put(url, node);
 		});
-		
-		MySQL.processQuery("SELECT ID, Rating, NrOfVotes, Title FROM game LIMIT 10", (row) -> {
+		System.out.println("Done users.");
+		System.out.println(nodes.size());
+
+		// Create game node objects
+		MySQL.processQuery("SELECT ID, Rating, NrOfVotes, Title FROM game", (row) -> {
 			int id = Integer.parseInt((String) row[0]);
 			String url = String.format("tt%07d", id);
 			int rating = Integer.parseInt((String) row[1]);
@@ -56,9 +59,10 @@ public class GraphBuilder {
 			Node node = new Node(url, context);
 			nodes.put(url, node);
 		});
-		
-		
-		//IDK wtf im doing - Bindu
+		System.out.println("Done games.");
+		System.out.println(nodes.size());
+
+		// IDK wtf im doing - Bindu
 
 		// Create review objects
 //		MySQL.processQuery(
@@ -78,9 +82,9 @@ public class GraphBuilder {
 	public static void main(String[] args) {
 		GraphBuilder builder = new GraphBuilder();
 		builder.genGraph();
-		for(Node node : builder.nodes.values()) {
-			GameContext con = (GameContext) node.getContext();
-			System.out.println(node.getUrl() + " " + con.getNrOfVotes());
-		}
+//		for(Node node : builder.nodes.values()) {
+//			GameContext con = (GameContext) node.getContext();
+//			System.out.println(node.getUrl() + " " + con.getNrOfVotes());
+//		}
 	}
 }
