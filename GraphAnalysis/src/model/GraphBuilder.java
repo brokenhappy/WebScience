@@ -46,8 +46,6 @@ public class GraphBuilder {
 			Node node = new Node(url, context);
 			nodes.put(url, node);
 		});
-		System.out.println("Done users.");
-		System.out.println(nodes.size());
 
 		// Create game node objects
 		MySQL.processQuery("SELECT ID, Rating, NrOfVotes, Title FROM game", (row) -> {
@@ -61,8 +59,6 @@ public class GraphBuilder {
 			Node node = new Node(url, context);
 			nodes.put(url, node);
 		});
-		System.out.println("Done games.");
-		System.out.println(nodes.size());
 
 	}
 
