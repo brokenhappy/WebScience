@@ -14,11 +14,11 @@ public class Node {
 	}
 
 	public void addNeighbour(Node node, Review review) {
-		adjacencies.put(node.getUrl(), review);
+		adjacencies.put(node.url, review);
 	}
 	
 	public boolean hasEdge(Node node) {
-		return adjacencies.containsKey(node.getUrl());
+		return adjacencies.containsKey(node.url);
 	}
 	
 	public String getUrl() {

@@ -34,11 +34,13 @@ public class GraphBuilder {
 		MySQL.processQuery("SELECT gameID, Category FROM game_category", (row) -> {
 			int id = Integer.parseInt((String) row[0]);
 			String category = (String) row[1];
+			if (!categories.containsKey(id))
+				categories.put(id, new ArrayList<String>());
 			categories.get(id).add(category);
 		});
 
 		// Create user node objects
-		MySQL.processQuery("SELECT ID, name FROM user LIMIT 1000", (row) -> {
+		MySQL.processQuery("SELECT ID, name FROM user", (row) -> {
 			int id = Integer.parseInt((String) row[0]);
 			String url = (String) row[0];
 			String name = (String) row[1];
@@ -48,7 +50,7 @@ public class GraphBuilder {
 		});
 
 		// Create game node objects
-		MySQL.processQuery("SELECT ID, Rating, NrOfVotes, Title FROM game", (row) -> {
+		MySQL.processQuery("SELECT ID, Rating, NrOfVotes, Title FROM game WHERE ID IN(SELECT game FROM review)", (row) -> {
 			int id = Integer.parseInt((String) row[0]);
 //			String url = String.format("tt%07d", id);
 			String url = (String) row[0];
@@ -63,10 +65,6 @@ public class GraphBuilder {
 	}
 
 	public void genEdges() {
-		// IDK wtf im doing - Bindu
-
-		List<Review> reviews = new ArrayList<Review>();
-		
 		// Create review objects
 		MySQL.processQuery("SELECT user, game, rating, date, helpfullnessPositive, helpfullnessNegative FROM review", (row) -> {
 			int user = Integer.parseInt((String) row[0]);
@@ -75,19 +73,14 @@ public class GraphBuilder {
 			LocalDate date = LocalDate.parse((String) row[3]);
 			int helpfulnessPositive = Integer.parseInt((String) row[4]);
 			int helpfulnessNegative = Integer.parseInt((String) row[5]);
-			Review review = new Review(user, game, rating, date, helpfulnessPositive, helpfulnessNegative);
-			reviews.add(review);
-//			System.out.println(review.getUser());
-
+			graph.addEdge(new Review(user, game, rating, date, helpfulnessPositive, helpfulnessNegative));
 		});
-//		for(Review review : reviews) {
-//			
-//		}
 	}
 
 	public static void main(String[] args) {
 		GraphBuilder builder = new GraphBuilder();
 		builder.genGraph();
+		builder.genEdges();
 //		System.out.println(builder.nodes.size());
 //		for(Node node : builder.nodes.values()) {
 //			GameContext con = (GameContext) node.getContext();
