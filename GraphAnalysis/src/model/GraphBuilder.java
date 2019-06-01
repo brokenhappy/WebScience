@@ -16,7 +16,6 @@ import graph.UserContext;
 
 public class GraphBuilder {
 
-	private Map<String, Node> nodes = new HashMap<String, Node>();
 	private Map<Integer, ArrayList<String>> categories = new HashMap<Integer, ArrayList<String>>();
 
 	private Graph graph;
@@ -40,26 +39,26 @@ public class GraphBuilder {
 		});
 
 		// Create user node objects
-		MySQL.processQuery("SELECT ID, name FROM user", (row) -> {
+		MySQL.processQuery("SELECT ID, name FROM user WHERE ID IN(SELECT user FROM review)", (row) -> {
 			int id = Integer.parseInt((String) row[0]);
-			String url = (String) row[0];
+			String url = "ur" + (String) row[0];
 			String name = (String) row[1];
 			UserContext context = new UserContext(id, name);
 			Node node = new Node(url, context);
-			nodes.put(url, node);
+			graph.addNode(node);
 		});
 
 		// Create game node objects
 		MySQL.processQuery("SELECT ID, Rating, NrOfVotes, Title FROM game WHERE ID IN(SELECT game FROM review)", (row) -> {
 			int id = Integer.parseInt((String) row[0]);
 //			String url = String.format("tt%07d", id);
-			String url = (String) row[0];
+			String url =  "tt" + (String) row[0];
 			int rating = Integer.parseInt((String) row[1]);
 			int nrOfVotes = Integer.parseInt((String) row[2]);
 			String title = (String) row[3];
 			GameContext context = new GameContext(id, title, categories.get(id), rating, nrOfVotes);
 			Node node = new Node(url, context);
-			nodes.put(url, node);
+			graph.addNode(node);
 		});
 
 	}
@@ -77,14 +76,4 @@ public class GraphBuilder {
 		});
 	}
 
-	public static void main(String[] args) {
-		GraphBuilder builder = new GraphBuilder();
-		builder.genGraph();
-		builder.genEdges();
-//		System.out.println(builder.nodes.size());
-//		for(Node node : builder.nodes.values()) {
-//			GameContext con = (GameContext) node.getContext();
-//			System.out.println(node.getUrl() + " " + con.getNrOfVotes());
-//		}
-	}
 }

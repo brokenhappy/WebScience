@@ -11,7 +11,7 @@ public class MySQL {
 	private static Connection getConn() {
 		try {
 			return DriverManager.getConnection("jdbc:mysql://localhost/imdab_db?"
-					+ "user=root&password=toor&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+					+ "user=root&password=Haknomore_99xex&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
 		} catch (Exception e) {
 			return null;
 		}
